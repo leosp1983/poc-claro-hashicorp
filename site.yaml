@@ -1,0 +1,17 @@
+---
+# ============================================================
+# Playbook principal — poc-claro-hashicorp
+# ============================================================
+- name: Configurar infraestrutura HashiCorp — Claro
+  hosts: all
+  gather_facts: true
+
+  roles:
+    - role: hashicorp/vault
+      tags: vault
+
+    - role: hashicorp/consul
+      tags: consul
+
+    - role: hashicorp/terraform
+      tags: terraform

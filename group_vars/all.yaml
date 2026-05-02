@@ -1,0 +1,28 @@
+---
+# ============================================================
+# Variáveis globais — poc-claro-hashicorp
+# ============================================================
+
+# --- Ambiente ---
+environment: production
+datacenter: claro
+
+# --- HashiCorp Vault ---
+vault_addr: "https://vault.claro.internal:8200"
+vault_namespace: "claro"
+vault_token: "{{ lookup('env', 'VAULT_TOKEN') }}"
+vault_skip_verify: false
+
+# --- HashiCorp Consul ---
+consul_addr: "https://consul.claro.internal:8500"
+consul_datacenter: "claro-dc1"
+consul_token: "{{ lookup('env', 'CONSUL_TOKEN') }}"
+
+# --- HashiCorp Terraform Cloud / Enterprise ---
+tfe_addr: "https://tfe.claro.internal"
+tfe_organization: "claro"
+tfe_token: "{{ lookup('env', 'TFE_TOKEN') }}"
+
+# --- Autenticação comum ---
+ansible_user: "ansible-svc"
+ansible_ssh_private_key_file: "~/.ssh/ansible_rsa"

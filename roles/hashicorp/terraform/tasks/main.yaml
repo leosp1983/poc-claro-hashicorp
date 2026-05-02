@@ -1,0 +1,33 @@
+---
+# ============================================================
+# Role: hashicorp/terraform — tasks/main.yaml
+# ============================================================
+
+- name: Instalar dependências do Terraform
+  ansible.builtin.package:
+    name:
+      - curl
+      - unzip
+      - gnupg
+    state: present
+  tags: terraform
+
+- name: Verificar versão do Terraform instalada
+  ansible.builtin.command: terraform version -json
+  register: terraform_installed_version
+  changed_when: false
+  failed_when: false
+  tags: terraform
+
+- name: Exibir versão instalada
+  ansible.builtin.debug:
+    msg: "Terraform versão instalada: {{ (terraform_installed_version.stdout | from_json).terraform_version | default('não instalado') }}"
+  when: terraform_installed_version.rc == 0
+  tags: terraform
+
+- name: Verificar se o diretório de workspaces existe
+  ansible.builtin.file:
+    path: "{{ terraform_workspace_dir }}"
+    state: directory
+    mode: "0755"
+  tags: terraform

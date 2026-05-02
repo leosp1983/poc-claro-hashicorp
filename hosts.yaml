@@ -1,0 +1,25 @@
+---
+# ============================================================
+# Inventário estático — poc-claro-hashicorp
+# ============================================================
+all:
+  children:
+
+    vault:
+      hosts:
+        vault01.claro.internal:
+        vault02.claro.internal:
+        vault03.claro.internal:
+
+    consul:
+      hosts:
+        consul01.claro.internal:
+        consul02.claro.internal:
+        consul03.claro.internal:
+
+    terraform:
+      hosts:
+        tfe01.claro.internal:
+
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
