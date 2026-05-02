@@ -4,7 +4,7 @@
 # ============================================================
 
 # --- vCenter ---
-vcenter_hostname: "kelvin.corp.clarobr"
+vcenter_hostname: "vcsa01-homelab.lcs.local"
 vcenter_validate_certs: false
 
 # --- Vault — caminho do segredo do vCenter ---
@@ -12,7 +12,3 @@ vault_url: "https://poc-claro-public-vault-6748fe8a.f3ea05ee.z1.hashicorp.cloud:
 vault_vcenter_secret_path: "andromeda/data/vcenter-nonprod/password"
 vault_auth_method: "approle"
 vault_validate_certs: false
-
-# vault_role_id e vault_secret_id devem ser passados como
-# extra-vars ou definidos em group_vars criptografados com Vault/ansible-vault:
-#   ansible-playbook vmware.yaml -e vault_role_id=<id> -e vault_secret_id=<sid>
