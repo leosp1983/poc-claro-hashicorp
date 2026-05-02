@@ -4,14 +4,17 @@
 # ============================================================
 
 # --- Ambiente ---
-environment: production
+project_env: production
 datacenter: claro
 
 # --- HashiCorp Vault ---
-vault_addr: "https://vault.claro.internal:8200"
-vault_namespace: "claro"
-vault_token: "{{ lookup('env', 'VAULT_TOKEN') }}"
+vault_addr: "https://vault.dev.cpq.k8s.corp.clarobr"
+vault_namespace: "andromeda"
 vault_skip_verify: false
+
+# --- Vault AppRole (injetados como extra-vars ou AWX credentials) ---
+# vault_role_id: definido em runtime via -e ou AWX Credential
+# vault_secret_id: definido em runtime via -e ou AWX Credential
 
 # --- HashiCorp Consul ---
 consul_addr: "https://consul.claro.internal:8500"
@@ -26,3 +29,10 @@ tfe_token: "{{ lookup('env', 'TFE_TOKEN') }}"
 # --- Autenticação comum ---
 ansible_user: "ansible-svc"
 ansible_ssh_private_key_file: "~/.ssh/ansible_rsa"
+
+# --- VMware / vCenter ---
+vcenter_hostname: "kelvin.corp.clarobr"
+vcenter_validate_certs: false
+vault_vcenter_secret_path: "andromeda/data/vcenter-nonprod/password"
+vault_auth_method: "approle"
+vault_validate_certs: false

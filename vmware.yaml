@@ -1,0 +1,27 @@
+---
+# ============================================================
+# Playbook: vmware.yaml
+# Consulta VMs no vCenter usando credenciais do Vault (AppRole)
+#
+# Uso:
+#   ansible-playbook vmware.yaml \
+#     -e vault_role_id=<role_id> \
+#     -e vault_secret_id=<secret_id>
+# ============================================================
+- name: Consultar VMs no vCenter via Vault AppRole
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  vars_prompt:
+    - name: vault_role_id
+      prompt: "Vault Role ID (AppRole)"
+      private: false
+
+    - name: vault_secret_id
+      prompt: "Vault Secret ID (AppRole)"
+      private: true
+
+  roles:
+    - role: vmware
+      tags: vmware
