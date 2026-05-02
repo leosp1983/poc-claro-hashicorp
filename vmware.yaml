@@ -13,14 +13,8 @@
   connection: local
   gather_facts: false
 
-  # vars_prompt:
-  #   - name: vault_role_id
-  #     prompt: "Vault Role ID (AppRole)"
-  #     private: false
+  tasks:
 
-  #   - name: vault_secret_id
-  #     prompt: "Vault Secret ID (AppRole)"
-  #     private: true
-
-  roles:
-    - role: vmware
+    - name: Acesso via CyberArk ao kelvin.local
+      include_role:
+        name: vmware
