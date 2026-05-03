@@ -21,14 +21,14 @@
     password: "{{ lookup('env', 'VMWARE_PASSWORD') }}"
     validate_certs: "{{ vcenter_validate_certs }}"
   register: vm_info
-  no_log: true
 
 # ------------------------------------------------------------------
 # 2. Exibir nome e status de cada VM
 # ------------------------------------------------------------------
 - name: Exibir Nome e Status das VMs
   ansible.builtin.debug:
-    msg: "VM: {{ item.guest_name }} | Power: {{ item.power_state }} | IP: {{ item.ip_address | default('N/A') }}"
+    msg: "VM: {{ item.guest_name }} | Power: {{ item.power_state }} | IP: {{
+      item.ip_address | default('N/A') }}"
   loop: "{{ vm_info.virtual_machines }}"
   loop_control:
     label: "{{ item.guest_name }}"
