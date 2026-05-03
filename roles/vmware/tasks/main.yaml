@@ -40,7 +40,7 @@
   ansible.builtin.copy:
     content: |
       # Relatório de VMs — {{ lookup('env', 'VMWARE_HOST') | default(vcenter_hostname) }}
-      # Gerado em: {{ ansible_date_time.iso8601 }}
+      # Gerado em: {{ now(utc=false, fmt='%Y-%m-%dT%H:%M:%S') }}
       {% for vm in vm_info.virtual_machines %}
       - name: {{ vm.guest_name }}
         power_state: {{ vm.power_state }}
@@ -49,6 +49,6 @@
         datacenter: {{ vm.datacenter | default('N/A') }}
         cluster: {{ vm.cluster | default('N/A') }}
       {% endfor %}
-    dest: "/tmp/vmware_report_{{ ansible_date_time.date }}.yaml"
+    dest: "/tmp/vmware_report_{{ now(utc=false, fmt='%Y-%m-%d') }}.yaml"
     mode: "0640"
   delegate_to: localhost
