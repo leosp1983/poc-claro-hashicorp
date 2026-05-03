@@ -1,62 +1,45 @@
 ---
 # ============================================================
 # Role: vmware — tasks/main.yaml
-# Busca credenciais do vCenter no HashiCorp Vault (AppRole)
-# e coleta informações de todas as VMs.
+# As credenciais do vCenter são injetadas pelo AAP via credencial
+# "VMware vCenter" (poc-claro-hashicorp-VCenter), que busca os
+# valores no Vault automaticamente antes de executar o playbook.
+#
+# Variáveis injetadas pelo AAP:
+#   VMWARE_HOST     → hostname do vCenter
+#   VMWARE_USER     → usuário do vCenter
+#   VMWARE_PASSWORD → senha do vCenter
 # ============================================================
 
 # ------------------------------------------------------------------
-# 1. Buscar credenciais do vCenter no Vault via AppRole
+# 1. Coletar informações de todas as VMs no vCenter
 # ------------------------------------------------------------------
-- name: Buscar credenciais do vCenter no Vault
-  ansible.builtin.set_fact:
-    vcenter_creds: "{{ lookup( 'community.hashi_vault.hashi_vault',
-      vault_vcenter_secret_path, url=vault_url, auth_method=vault_auth_method,
-      role_id=vault_role_id, secret_id=vault_secret_id,
-      validate_certs=vault_validate_certs ) }}"
-
-# ------------------------------------------------------------------
-# 2. Validar que as credenciais foram recuperadas com sucesso
-# ------------------------------------------------------------------
-- name: Validar que as credenciais do vCenter foram obtidas
-  ansible.builtin.assert:
-    that:
-      - vcenter_creds is defined
-      - vcenter_creds.username is defined
-      - vcenter_creds.password is defined
-    fail_msg: "Falha ao recuperar credenciais do vCenter no Vault. Verifique o path
-      e as permissões do AppRole."
-    success_msg: "Credenciais do vCenter obtidas com sucesso."
-
-# ------------------------------------------------------------------
-# 3. Coletar informações de todas as VMs no vCenter
-# ------------------------------------------------------------------
-- name: Coletar informações de todas as VMs em {{ vcenter_hostname }}
+- name: Coletar informações de todas as VMs no vCenter
   community.vmware.vmware_vm_info:
-    hostname: "{{ vcenter_hostname }}"
-    username: "{{ vcenter_creds.username }}"
-    password: "{{ vcenter_creds.password }}"
+    hostname: "{{ lookup('env', 'VMWARE_HOST') | default(vcenter_hostname) }}"
+    username: "{{ lookup('env', 'VMWARE_USER') }}"
+    password: "{{ lookup('env', 'VMWARE_PASSWORD') }}"
     validate_certs: "{{ vcenter_validate_certs }}"
   register: vm_info
+  no_log: true
 
 # ------------------------------------------------------------------
-# 4. Exibir nome e status de cada VM
+# 2. Exibir nome e status de cada VM
 # ------------------------------------------------------------------
 - name: Exibir Nome e Status das VMs
   ansible.builtin.debug:
-    msg: "VM: {{ item.guest_name }} | Power: {{ item.power_state }} | IP: {{
-      item.ip_address | default('N/A') }}"
+    msg: "VM: {{ item.guest_name }} | Power: {{ item.power_state }} | IP: {{ item.ip_address | default('N/A') }}"
   loop: "{{ vm_info.virtual_machines }}"
   loop_control:
     label: "{{ item.guest_name }}"
 
 # ------------------------------------------------------------------
-# 5. Salvar relatório de VMs em arquivo local (opcional)
+# 3. Salvar relatório de VMs em arquivo local
 # ------------------------------------------------------------------
 - name: Salvar relatório de VMs em arquivo local
   ansible.builtin.copy:
     content: |
-      # Relatório de VMs — {{ vcenter_hostname }}
+      # Relatório de VMs — {{ lookup('env', 'VMWARE_HOST') | default(vcenter_hostname) }}
       # Gerado em: {{ ansible_date_time.iso8601 }}
       {% for vm in vm_info.virtual_machines %}
       - name: {{ vm.guest_name }}

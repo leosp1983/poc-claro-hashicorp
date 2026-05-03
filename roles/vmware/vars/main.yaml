@@ -6,9 +6,3 @@
 # --- vCenter ---
 vcenter_hostname: "vcsa01-homelab.lcs.local"
 vcenter_validate_certs: false
-
-# --- Vault — caminho do segredo do vCenter ---
-vault_url: "https://poc-claro-public-vault-6748fe8a.f3ea05ee.z1.hashicorp.cloud:8200"
-vault_vcenter_secret_path: "andromeda/data/vcenter-nonprod/password"
-vault_auth_method: "approle"
-vault_validate_certs: false
